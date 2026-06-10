@@ -125,7 +125,7 @@ local function toggleESP()
                         highlight.FillTransparency = 0.5
                     end
                 end
-                task.wait(1) -- Cập nhật mỗi 1 giây thay vì mỗi giây 60 lần
+                task.wait(3) -- Cập nhật mỗi 1 giây thay vì mỗi giây 60 lần
             end
         end)
     else
