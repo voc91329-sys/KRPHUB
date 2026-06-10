@@ -148,7 +148,7 @@ Tab:CreateButton({
 
 
 -- --- TAB 2: GAME TURBO ---
-local Tab2 = Window:CreateTab("GAME TURBO", nil)
+local Tab2 = Window:CreateTab("FIX steal a Fruits", nil)
 
 Tab2:CreateButton({
 Name = "HIỆU NĂNG",
