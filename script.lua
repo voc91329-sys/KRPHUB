@@ -10,7 +10,7 @@ local ProximityService = game:GetService("ProximityPromptService")
 local isNoHoldEnabled = false
 
 Tab:CreateToggle({
-Name = "No Hold (Bỏ giữ)",
+Name = "KHÔNG CẦN CẦN GIỮ/TƯƠNG TÁC",
 CurrentValue = false,
 Callback = function(Value)
 isNoHoldEnabled = Value
@@ -26,11 +26,11 @@ local function GiveDashTool()
 local player = game.Players.LocalPlayer
 local backpack = player.Backpack
 local char = player.Character
-if backpack:FindFirstChild("Dash Tool") then backpack["Dash Tool"]:Destroy() end
-if char and char:FindFirstChild("Dash Tool") then char["Dash Tool"]:Destroy() end
+if backpack:FindFirstChild("CÔNG CỤ LƯỚT TỚI") then backpack["CÔNG CỤ LƯỚT TỚI"]:Destroy() end
+if char and char:FindFirstChild("CÔNG CỤ LƯỚT TỚI") then char["CÔNG CỤ LƯỚT TỚI"]:Destroy() end
 
 local tool = Instance.new("Tool")  
-tool.Name = "Dash Tool"  
+tool.Name = "LƯỚT TỚI"  
 tool.RequiresHandle = false  
 tool.Parent = backpack  
 
@@ -48,11 +48,11 @@ game.Players.LocalPlayer.CharacterAdded:Connect(function() task.wait(1) GiveDash
 local SavedPos = nil
 local SaveTPButton
 SaveTPButton = Tab:CreateButton({
-Name = "Save Tọa độ",
+Name = "LƯU",
 Callback = function()
 local hrp = game.Players.LocalPlayer.Character and game.Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
 if not SavedPos then
-if hrp then SavedPos = hrp.CFrame; SaveTPButton:Set("TP Đến Tọa Độ") end
+if hrp then SavedPos = hrp.CFrame; SaveTPButton:Set("TP") end
 else
 if hrp then hrp.CFrame = SavedPos end
 end
@@ -61,7 +61,7 @@ end,
 
 -- --- PHẦN JUMP BOOST (Đẩy 120) ---
 local isJumpBoostEnabled = false
-Tab:CreateToggle({Name = "Jump Boost (Nhảy 120)", Callback = function(Value) isJumpBoostEnabled = Value end})
+Tab:CreateToggle({Name = "LỰC ĐẨY", Callback = function(Value) isJumpBoostEnabled = Value end})
 
 game:GetService("RunService").Heartbeat:Connect(function()
 if isJumpBoostEnabled then
@@ -104,6 +104,50 @@ local hrp = char and char:FindFirstChild("HumanoidRootPart")
 end
 
 end)
+-- Bật/Tắt ESP
+local espEnabled = false
+local espConnection = nil
+
+local function updateESP()
+    -- Xóa hết các Highlight cũ trước khi làm mới
+    for _, obj in pairs(game.Workspace:GetDescendants()) do
+        if obj:IsA("Highlight") and obj.Name == "KRP_ESP" then
+            obj:Destroy()
+        end
+    end
+
+    if espEnabled then
+        for _, player in pairs(game.Players:GetPlayers()) do
+            if player.Character then
+                local highlight = Instance.new("Highlight")
+                highlight.Name = "KRP_ESP"
+                highlight.Parent = player.Character
+                highlight.FillColor = Color3.fromRGB(255, 0, 0) -- Màu đỏ
+                highlight.OutlineColor = Color3.fromRGB(255, 255, 255)
+                highlight.FillTransparency = 0.5
+            end
+        end
+    end
+end
+
+-- Nút bấm Bật/Tắt ESP
+Tab:CreateButton({
+    Name = "NHÌN THẤY TẤT CẢ NGƯỜI CHƠI",
+    Callback = function()
+        espEnabled = not espEnabled -- Đảo ngược trạng thái
+        
+        if espEnabled then
+            -- Bật: Chạy vòng lặp để cập nhật liên tục
+            espConnection = game:GetService("RunService").RenderStepped:Connect(updateESP)
+            Rayfield:Notify({Title = "KRP HUB", Content = "Đã BẬT ESP!", Duration = 2})
+        else
+            -- Tắt: Ngắt kết nối và xóa Highlight
+            if espConnection then espConnection:Disconnect() end
+            updateESP() -- Gọi hàm này để xóa sạch các Highlight cũ
+            Rayfield:Notify({Title = "KRP HUB", Content = "Đã TẮT ESP!", Duration = 2})
+        end
+    end
+})
 
 -- --- TAB 2: GAME TURBO ---
 local Tab2 = Window:CreateTab("GAME TURBO", nil)
@@ -187,7 +231,7 @@ _G.AutoLv1Enabled = false
 local TargetPos = Vector3.new(3549, 89, 741)
 
 Tab3:CreateToggle({
-Name = "Auto Lv1 (Bay & Né Lava)",
+Name = "BAY TỚI CHỔ CUỐI",
 CurrentValue = false,
 Callback = function(Value)
 _G.AutoLv1Enabled = Value
