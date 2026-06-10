@@ -110,15 +110,70 @@ local Tab2 = Window:CreateTab("GAME TURBO", nil)
 
 Tab2:CreateButton({
 Name = "HIỆU NĂNG",
-Callback = function()
+-- Premium Bulk Eraser V9: Full Optimization
+local RunService = game:GetService("RunService")
 local Lighting = game:GetService("Lighting")
-Lighting.GlobalShadows = false
-Lighting.Brightness = 2
-Lighting.ClockTime = 12
-workspace.Terrain.Decoration = false
-Rayfield:Notify({Title = "Đã tối ưu!", Content = "Đã giảm lag tối đa.", Duration = 5})
-end,
-})
+local Terrain = workspace:FindFirstChildOfClass("Terrain")
+
+local targets = {
+    "NPC", 
+    "LimitedProductStand", 
+    "CutlassGamepassPrompt", 
+    "AttackVfx", 
+    "Regions", 
+    "Map", 
+    "AnimatedModel"
+}
+
+local function DeepBulkDelete()
+    setfpscap(120) -- Ép 120 FPS
+    
+    -- 1. Ép vật liệu về 0.01%
+    if Terrain then
+        Terrain.WaterWaveSize = 0.01
+        Terrain.WaterWaveSpeed = 0.01
+        Terrain.WaterReflectance = 0.01
+        Terrain.WaterTransparency = 0.01
+    end
+
+    -- 2. Giảm đồ họa 80% (Tắt đổ bóng và giảm chất lượng chi tiết)
+    settings().Rendering.QualityLevel = Enum.QualityLevel.Level01
+    Lighting.GlobalShadows = false
+    Lighting.Brightness = 0
+
+    -- 3. Xóa xương mù & Bầu trời
+    Lighting.FogEnd = 999999
+    for _, obj in pairs(Lighting:GetChildren()) do
+        if obj:IsA("Sky") or obj:IsA("Atmosphere") or obj:IsA("BloomEffect") or 
+           obj:IsA("DepthOfFieldEffect") or obj:IsA("SunRaysEffect") then
+            obj:Destroy()
+        end
+    end
+
+    -- 4. Xóa danh sách vật thể gây lag (Đã loại bỏ Base và Model)
+    local count = 0
+    for _, obj in pairs(workspace:GetDescendants()) do
+        for _, name in pairs(targets) do
+            if obj.Name == name then
+                obj:Destroy()
+                count += 1
+                break
+            end
+        end
+    end
+    print("--- DỌN DẸP HOÀN TẤT: Đã xóa " .. count .. " vật thể ---")
+end
+
+-- Tự động chạy lại khi nhân vật hồi sinh
+game:GetService("Players").LocalPlayer.CharacterAdded:Connect(function()
+    task.wait(1)
+    DeepBulkDelete()
+end)
+
+-- Chạy lần đầu
+DeepBulkDelete()
+
+
 -- --- PHẦN FPS UNLOCKER ---
 local FPSSection = Tab2:CreateSection("UNLOCK FPS")
 
